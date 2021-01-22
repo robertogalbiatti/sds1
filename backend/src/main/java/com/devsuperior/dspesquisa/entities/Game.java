@@ -8,29 +8,40 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.devsuperior.dspesquisa.entities.enums.Platform;
+
 @Entity
-@Table(name ="tb_genre")
-public class Genre implements Serializable{
+@Table(name ="tb_game")
+public class Game implements Serializable{
 	private static final long serialVersionUID = 1L;
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) //notação para utilizar para H2 e para PostgreSQL
 	private Long id;
-	private String name;
+	private String title;
+	private Platform platform;
 	
-	@OneToMany (mappedBy= "genre") //este nome tem que bater com o atributo da classe Genre (do ManyToOne)
-	List<Game> games = new ArrayList<>();
+	@ManyToOne
+	@JoinColumn(name= "genre_id")//mapeamento da chave estrangeira
+	private Genre genre; //associação
 	
-	public Genre() {
+	@OneToMany(mappedBy = "game")
+	private List<Record> records = new ArrayList<>();; //associação
+	
+	public Game() {
 	}
 
-	public Genre(Long id, String name) {
+	public Game(Long id, String title, Platform platform, Genre genre) {
 		super();
 		this.id = id;
-		this.name = name;
+		this.title = title;
+		this.platform = platform;
+		this.genre = genre;
 	}
 
 	public Long getId() {
@@ -41,17 +52,32 @@ public class Genre implements Serializable{
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setTitle(String title) {
+		this.title = title;
 	}
-	
 
-	public List<Game> getGames() {
-		return games;
+	public Platform getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(Platform platform) {
+		this.platform = platform;
+	}
+
+	public Genre getGenre() {
+		return genre;
+	}
+
+	public void setGenre(Genre genre) {
+		this.genre = genre;
+	}
+
+	public List<Record> getRecords() {
+		return records;
 	}
 
 	@Override
@@ -70,7 +96,7 @@ public class Genre implements Serializable{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Genre other = (Genre) obj;
+		Game other = (Game) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
@@ -78,6 +104,5 @@ public class Genre implements Serializable{
 			return false;
 		return true;
 	}
-	
 	
 }
